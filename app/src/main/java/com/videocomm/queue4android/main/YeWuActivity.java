@@ -263,7 +263,7 @@ public class YeWuActivity extends Activity implements OnClickListener, VComSDKEv
             refreshData(queueBean);
         } else if (iEventType == VCOM_QUEUEEVENT_ENTERRESULT) {
             //进入队列
-            if (pd != null){
+            if (pd != null) {
                 pd.dismiss();
             }
 

@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SurfaceView
-        android:id="@+id/surface_remote"
+    <LinearLayout
+        android:id="@+id/ll_remote"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
 
-
-    <SurfaceView
-        android:id="@+id/surface_local"
+    <LinearLayout
+        android:id="@+id/ll_local"
         android:layout_width="120dp"
         android:layout_height="0dp"
         android:layout_gravity="bottom|right"
@@ -20,8 +20,13 @@
         android:layout_marginEnd="5dp"
         app:layout_constraintDimensionRatio="h,3:4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <!--      android:background="@drawable/video_bg" -->
+        app:layout_constraintTop_toTopOf="parent">
+
+        <SurfaceView
+            android:id="@+id/surface_local"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
 
     <TextView

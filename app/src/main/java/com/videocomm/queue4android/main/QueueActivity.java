@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -51,13 +52,16 @@ public class QueueActivity extends Activity implements VComSDKEvent {
     private Dialog dialog;
     private boolean isStartVideo = false;//记录是否开启视频通话
     private boolean isDoExit;//记录是否主动退出
+    private String agentId;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //自定义标题栏
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_queue);
-
+        //禁止熄灭屏幕
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //初始化SDK
         initSdk();
         //初始化布局
@@ -214,15 +218,19 @@ public class QueueActivity extends Activity implements VComSDKEvent {
     public void OnConferenceResult(int iAction, String lpConfId, int iErrorCode) {
         if (VComSDKDefine.VCOM_CONFERENCE_ACTIONCODE_JOIN == iAction) {
             if (iErrorCode == 0) {
-                //启动视频通讯(要在加入会议成功后才能开启视频通讯)
-                startVideoActvity();
+
             }
         }
     }
 
-    private void startVideoActvity() {
+    /**
+     * @param confid 会议ID
+     */
+    private void startVideoActvity(String confid) {
+        Log.d(tag,"agentId-intent"+agentId);
         isStartVideo = true;
         Intent intent = new Intent();
+        intent.putExtra("confid", confid);
         intent.setClass(this, VideoActivity.class);
         this.startActivity(intent);
         finish();
@@ -307,7 +315,7 @@ public class QueueActivity extends Activity implements VComSDKEvent {
             }
             //坐席点击 示闲 时回调
             //坐席ID
-            String agentId = JsonUtil.jsonToStr(lpUserData, "agent");
+            agentId = JsonUtil.jsonToStr(lpUserData, "agent");
             mApplication.setTargetUserName(agentId);
             mTitleName.setText("正在呼叫坐席" + agentId);
             queueButton.setText(R.string.finish_call);
@@ -320,7 +328,8 @@ public class QueueActivity extends Activity implements VComSDKEvent {
             //获取会议ID
             String confid = JsonUtil.jsonToStr(lpUserData, "confid");
             //加入会议
-            mVComMediaSDK.VCOM_JoinConference(confid, "", "");
+//            mVComMediaSDK.VCOM_JoinConference(confid, "", "");
+            startVideoActvity(confid);
         } else if (iEventType == VCOM_QUEUEEVENT_HANGUPVIDEO) {
             //用户 坐席挂断 （注意： 这里的ErrorCode 是 408或者0）
             BaseMethod.showToast("对方已结束通话...", QueueActivity.this);
